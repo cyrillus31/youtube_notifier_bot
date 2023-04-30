@@ -21,7 +21,6 @@ class Connection():
         response = await response.json()
         updates = dict()
         for item in response["result"]:
-            print("hi")
             chat_id = item["message"]["chat"]["id"]
             username = item["message"]["from"]["first_name"]
             update_id = item["update_id"]

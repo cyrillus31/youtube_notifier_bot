@@ -17,13 +17,16 @@ async def message_handler(incoming, chat_id, username):
             return "Channel is already added"
 
     elif "/latest" == incoming:
-        return db.get_10_latest_videos_for_users(chat_id)
+        return db.get_10_latest_videos_for_user(chat_id)
     
     elif "/add_favorite" in incoming and len(incoming.split()) ==2:
         return db.add_to_favorite(incoming.split()[1], chat_id)
     
     elif "/get_favorites" in incoming:
         return db.get_favorites(chat_id)
+    
+    elif "/help" in incoming:
+        return responses.help
 
     return "I don't understand you"
 

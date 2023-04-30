@@ -90,7 +90,10 @@ def get_favorites(user_id):
                JOIN favorites ON videos.id=favorites.video_id
                WHERE favorites.user_id=?"""
     cur.execute(query, (user_id,))
-    return "\n".join([f"{title}: {url}" for (title, url) in cur.fetchall()])
+    try:
+        return "\n".join([f"{title}: {url}" for (title, url) in cur.fetchall()])
+    except:
+        return "No videos in favorites"
 
 
 
