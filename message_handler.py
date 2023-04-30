@@ -2,7 +2,7 @@ import responses
 import db
 import google_api
 
-def message_handler(incoming, chat_id, username):
+async def message_handler(incoming, chat_id, username):
     if "/start" == incoming:
         if db.add_user(username, chat_id):
             return responses.start.format(username)

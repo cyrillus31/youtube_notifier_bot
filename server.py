@@ -5,7 +5,6 @@ import os
 from c31_telegram_bot_api import Connection 
 from message_handler import message_handler
 import events
-# from google_api import 
 
 
 TOKEN = os.getenv("TELEGRAM_YOUTUBE_NOTIFIER_TOKEN")
@@ -21,7 +20,7 @@ async def main():
             # this part handles incoming messages
             for update_id in sorted(update):
                 message, chat_id, username = update[update_id]
-                response = message_handler(message, chat_id, username)
+                response = await message_handler(message, chat_id, username)
 
                 # check if you want preview on the message
                 if "/get_favorites" in message:
@@ -33,12 +32,11 @@ async def main():
             
             #this part handles business logic and sends updates
             videos_added = events.add_new_videos() 
-            print(videos_added)
             for url, chat_id in videos_added:
                 await connection.send_message(text="NEW VIDEO!\n{}".format(url), chat_id=chat_id)
 
             videos_added = []
-            await asyncio.sleep(3) 
+            await asyncio.sleep(2) 
 
 
 if __name__ == "__main__":
