@@ -75,11 +75,20 @@ def get_10_latest_videos_for_user(user_id: str) -> list[tuple]:
     return "\n".join([f"{id}) {title}" for id, title in cur.fetchall()])
 
 def add_to_favorite(video_id: str, user_id: str):
+    # check if the video user is trying to add belongs to him
+    query = """SELECT * FROM videos 
+               JOIN channel_user ON channel_user.channel_id=videos.channel_id
+               WHERE videos.id=? and channel_user.user_id=?"""
+    
+    cur.execute(query, (video_id, user_id))
+    if cur.fetchall() == []:
+        return "This video doesn't belong to you"
+
     query = """INSERT INTO favorites VALUES(?, ?)"""
     try:
         cur.execute(query, (video_id, user_id))
         conn.commit()
-        return "Video {video_id} was added to favorites"
+        return f"Video {video_id} was added to favorites"
     except:
         return "Video is already in favorites"
 
