@@ -35,10 +35,12 @@ class Connection():
         return updates
 
 
-    async def send_message(self, chat_id, text):
+    async def send_message(self, chat_id, text, disable_web_page_preview=False, disable_notification=False):
         "Sends a message back"
         payload = {'text': text, 
-                   'chat_id': chat_id}
+                   'chat_id': chat_id,
+                   "disable_web_page_preview": disable_web_page_preview,
+                   "disable_notification": disable_notification}
         await self.session.post(self.url+"/sendMessage", json=payload)
         print('message sent')
     

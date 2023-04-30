@@ -43,7 +43,7 @@ def get_latest_video_for_channel(channel_id: str) -> tuple:
     )
 
     response = request.execute()
-    print(response)
+    # print(response)
 
     playlist_id = response["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
 
@@ -55,7 +55,7 @@ def get_latest_video_for_channel(channel_id: str) -> tuple:
     )
 
     res = request.execute()
-    print(res["items"][0]["snippet"]["title"])
+    # print(res["items"][0]["snippet"]["title"])
     videoId = res["items"][0]["snippet"]["resourceId"]["videoId"]
     videoTitle = res["items"][0]["snippet"]["title"]
 
@@ -66,10 +66,11 @@ def get_latest_video_for_channel(channel_id: str) -> tuple:
     return videoTitle, url
 
 def create_dict_of_latest_vids(channels_id: list[str]) -> dict:
+    "Returns a dictionary where key is a title of a video and values are (url, channel_id)"
     result = {}
-    for id in channels_id:
-        title, url = get_latest_video_for_channel(id)
-        result[title] = url
+    for channel_id in channels_id:
+        title, url = get_latest_video_for_channel(channel_id)
+        result[title] = url, channel_id
     return result
 
 service.close()
