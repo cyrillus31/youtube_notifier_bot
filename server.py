@@ -20,7 +20,7 @@ async def incoming():
             response = await message_handler(message, chat_id, username)
 
             # check if you want preview on the message
-            if "/get_favorites" in message:
+            if "/get_favorites" in message or "/latest" in message:
                 disable_preview = True
             else:
                 disable_preview = False
