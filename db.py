@@ -63,16 +63,17 @@ def get_videos():
     return cur.fetchall()
 
 def get_10_latest_videos_for_user(user_id: str) -> list[tuple]:
-    "Returns a list of tuples for five latests videos (id, title)"
-    query = """SELECT id, title FROM videos 
+    "Returns a list of tuples for five latests videos (id, title, url)"
+    query = """SELECT * FROM (SELECT id, title, url FROM videos 
                JOIN channel_user 
                ON videos.channel_id=channel_user.channel_id
                WHERE channel_user.user_id=?
-               ORDER BY id
-               LIMIT 10
+               ORDER BY id DESC
+               LIMIT 10)
+               ORDER BY id ASC
                """
     cur.execute(query, (user_id,))
-    return "\n".join([f"{id}) {title}" for id, title in cur.fetchall()])
+    return "\n\n".join([f"{id}) [{title}]({url})" for id, title, url in cur.fetchall()])
 
 def add_to_favorite(video_id: str, user_id: str):
     # check if the video user is trying to add belongs to him
@@ -95,12 +96,12 @@ def add_to_favorite(video_id: str, user_id: str):
 
 def get_favorites(user_id):
     "Returns a list containing video_title and vidoe_url"
-    query = """SELECT videos.title, videos.url FROM videos
+    query = """SELECT videos.id, videos.title, videos.url FROM videos
                JOIN favorites ON videos.id=favorites.video_id
                WHERE favorites.user_id=?"""
     cur.execute(query, (user_id,))
     try:
-        return "\n".join([f"{title}: {url}" for (title, url) in cur.fetchall()])
+        return "\n".join([f"{id}) [{title}]({url})" for (id, title, url) in cur.fetchall()])
     except:
         return "No videos in favorites"
 

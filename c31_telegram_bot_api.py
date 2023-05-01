@@ -39,7 +39,9 @@ class Connection():
         payload = {'text': text, 
                    'chat_id': chat_id,
                    "disable_web_page_preview": disable_web_page_preview,
-                   "disable_notification": disable_notification}
+                   "disable_notification": disable_notification,
+                   "parse_mode": "Markdown"
+                   }
         await self.session.post(self.url+"/sendMessage", json=payload)
         print('message sent')
     
