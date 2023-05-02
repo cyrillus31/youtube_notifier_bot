@@ -29,13 +29,11 @@ class Connection():
                 text = item["message"]["text"]
 
                 updates[update_id] = text, chat_id, username
+                self.offset = update_id + 1
 
             except KeyError:
                 continue
-            
-            finally:
-                self.offset = update_id + 1
-            
+
         # print(updates)
         return updates
 
