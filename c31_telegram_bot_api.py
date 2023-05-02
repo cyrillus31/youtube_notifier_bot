@@ -19,16 +19,22 @@ class Connection():
     async def get_updates(self, limit=100, timeout=1) -> dict:
         response = await self.session.get(self.url+f"/getUpdates?offset={self.offset}&limit={limit}&timeout={timeout}")
         response = await response.json()
+        # print([result["message"] for result in response["result"]])
         updates = dict()
         for item in response["result"]:
-            chat_id = item["message"]["chat"]["id"]
-            username = item["message"]["from"]["first_name"]
-            update_id = item["update_id"]
-            text = item["message"]["text"]
+            try:
+                chat_id = item["message"]["chat"]["id"]
+                username = item["message"]["from"]["first_name"]
+                update_id = item["update_id"]
+                text = item["message"]["text"]
 
-            updates[update_id] = text, chat_id, username
+                updates[update_id] = text, chat_id, username
 
-            self.offset = update_id + 1
+            except KeyError:
+                continue
+            
+            finally:
+                self.offset = update_id + 1
             
         # print(updates)
         return updates

@@ -7,9 +7,13 @@ import requests
 API_KEY = os.getenv("GOOGLE_YOUTUBE_API_KEY").strip()
 service = build("youtube", "v3", developerKey=API_KEY)
 
-def get_channel_id(url: str) -> str:
+def get_channel_id(url: str) -> tuple:
     "Parses the link and gets the channelId meta information"
-    response = requests.get(url)
+    try:
+        response = requests.get(url, timeout=5)
+    except requests.exceptions.MissingSchema:
+        return False, False
+
     soup = bs4.BeautifulSoup(response.text, "lxml")
     meta = soup.find_all("meta")
 

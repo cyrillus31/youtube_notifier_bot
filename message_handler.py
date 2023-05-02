@@ -11,6 +11,10 @@ async def message_handler(incoming, chat_id, username):
     elif "/add_channel" in incoming and len(incoming.split()) == 2:
         url = incoming.split()[1]
         yt_id, yt_handle = google_api.get_channel_id(url)
+
+        if not yt_id or not yt_handle:
+            return "Sorry. Channel can't be added"
+
         if db.add_channel(chat_id, yt_id, yt_handle):
             return responses.added
         else:
