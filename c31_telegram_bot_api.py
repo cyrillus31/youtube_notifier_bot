@@ -31,7 +31,7 @@ class Connection():
                 updates[update_id] = text, chat_id, username
                 self.offset = update_id + 1
 
-            except KeyError:
+            except:
                 continue
 
         # print(updates)
