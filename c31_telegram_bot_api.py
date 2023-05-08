@@ -1,6 +1,6 @@
 import logging
 
-logging.basicConfig(level=logging.DEBUG, 
+logging.basicConfig(level=logging.INFO, 
                     format=f"%(asctime)s %(levelname)s: %(message)s",
                     datefmt="%d-%m-%Y %H-%M-%S",
                     filename="logs/telegram_api.logs")
@@ -19,7 +19,7 @@ class Connection():
         response = await self.session.get(self.url+f"/getUpdates?offset={self.offset}&limit={limit}&timeout={timeout}")
         response = await response.json()
 
-        if response["results"]:
+        if response["result"]:
             logging.info("JSON with updates:\n%s", [result["message"] for result in response["result"]])
 
         updates = dict()
@@ -35,10 +35,11 @@ class Connection():
 
             except:
                 logging.exception(msg="Something wrong with the response form Telegram")
-                logging.debug("The following response was recieved:\n%s", response)
+                logging.info("The following response was recieved:\n%s", response)
                 continue
 
-        logging.info("The following UPDATES object was created:\n%s", updates)
+        if updates:
+            logging.info("The following UPDATES object was created:\n%s", updates)
         return updates
 
 
@@ -50,6 +51,7 @@ class Connection():
                    "disable_notification": disable_notification,
                    "parse_mode": "Markdown"
                    }
+
         logging.info("The following message is going to be sent: %s", text)
 
         try:
