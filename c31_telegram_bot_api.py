@@ -1,6 +1,9 @@
-import asyncio
-import aiohttp
-import json
+import logging
+
+logging.basicConfig(level=logging.DEBUG, 
+                    format=f"%(asctime)s %(levelname)s: %(message)s",
+                    datefmt="%d-%m-%Y %H-%M-%S",
+                    filename="logs/telegram_api.logs")
 
 class Connection():
     
@@ -11,15 +14,14 @@ class Connection():
         self.session = None
         self.offset = -50
     
-    # async def get_session(self):
-        # async with aiohttp.ClientSession() as session:
-            # self.session = session
-    
 
     async def get_updates(self, limit=100, timeout=1) -> dict:
         response = await self.session.get(self.url+f"/getUpdates?offset={self.offset}&limit={limit}&timeout={timeout}")
         response = await response.json()
-        # print([result["message"] for result in response["result"]])
+
+        if response["results"]:
+            logging.info("JSON with updates:\n%s", [result["message"] for result in response["result"]])
+
         updates = dict()
         for item in response["result"]:
             try:
@@ -32,9 +34,11 @@ class Connection():
                 self.offset = update_id + 1
 
             except:
+                logging.exception(msg="Something wrong with the response form Telegram")
+                logging.debug("The following response was recieved:\n%s", response)
                 continue
 
-        # print(updates)
+        logging.info("The following UPDATES object was created:\n%s", updates)
         return updates
 
 
@@ -46,8 +50,13 @@ class Connection():
                    "disable_notification": disable_notification,
                    "parse_mode": "Markdown"
                    }
-        await self.session.post(self.url+"/sendMessage", json=payload)
-        print('message sent')
+        logging.info("The following message is going to be sent: %s", text)
+
+        try:
+            await self.session.post(self.url+"/sendMessage", json=payload)
+            logging.info("The message was sent successfully")
+        except:
+            logging.exception("The message wasn't send.")
     
 
 

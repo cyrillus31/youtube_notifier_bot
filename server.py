@@ -2,6 +2,10 @@ import aiohttp
 import asyncio
 import os
 
+# create a folder for logs in c31_telegram_bot_api module
+if not os.path.exists("logs"):
+    os.makedirs("logs")
+
 from c31_telegram_bot_api import Connection 
 from message_handler import message_handler
 import events
