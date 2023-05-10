@@ -1,4 +1,5 @@
 import logging
+import json
 
 logging.basicConfig(level=logging.INFO, 
                     format=f"%(asctime)s %(levelname)s: %(message)s",
@@ -55,13 +56,11 @@ class Connection():
         logging.info("The following message is going to be sent: %s", text)
 
         try:
-            await self.session.post(self.url+"/sendMessage", json=payload)
-            logging.info("The message was sent successfully")
+            response = await self.session.post(self.url+"/sendMessage", json=payload)
+            logging.info(f"The payloiad was sent to the telegram server:\n{payload}\nAnd the following response was recieved:\n{await response.text()}")
+            if (await response.json())["ok"] != True:
+                logging.warning("The check the response above! It wasn't OK!")
         except:
             logging.exception("The message wasn't send.")
     
-
-
-
-
 
