@@ -25,7 +25,7 @@ def get_channel_id(url: str) -> tuple:
         if yt_handle and channel_id:
             break
         try:
-            if m.attrs["itemprop"] == "channelId":
+            if m.attrs["itemprop"] == "channelId" or m.attrs["itemprop"] == "identifier":
                 channel_id = m.attrs["content"]
         except:
             pass
