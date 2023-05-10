@@ -28,7 +28,7 @@ def get_channel_id(url: str) -> tuple:
     response = requests.get(url)
     soup = bs4.BeautifulSoup(response.text, "lxml")
     meta = soup.find_all("meta")
-    print(soup)
+    print(meta)
 
     channel_id = "Unknown"
 
@@ -38,7 +38,7 @@ def get_channel_id(url: str) -> tuple:
         if yt_handle and channel_id:
             break
         try:
-            if m.attrs["itemprop"] == "channelId":
+            if m.attrs["itemprop"] == "channelId" or m.attrs["itemprop"] == "identifier":
                 channel_id = m.attrs["content"]
         except:
             pass
@@ -49,4 +49,4 @@ def get_channel_id(url: str) -> tuple:
             continue
     return channel_id, yt_handle
 
-print(get_channel_id("https://youtube.com/@margulan__seissembai"))
+print(get_channel_id("https://youtube.com/@theprimetimeagen"))
