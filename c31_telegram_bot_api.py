@@ -44,13 +44,13 @@ class Connection():
         return updates
 
 
-    async def send_message(self, chat_id, text, disable_web_page_preview=False, disable_notification=False):
+    async def send_message(self, chat_id, text, parse_mode="Markdown", disable_web_page_preview=False, disable_notification=False):
         "Sends a message back"
         payload = {'text': text, 
                    'chat_id': chat_id,
                    "disable_web_page_preview": disable_web_page_preview,
                    "disable_notification": disable_notification,
-                   "parse_mode": "Markdown"
+                   "parse_mode": parse_mode 
                    }
 
         logging.info("The following message is going to be sent: %s", text)

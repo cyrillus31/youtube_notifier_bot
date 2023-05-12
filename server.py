@@ -38,7 +38,7 @@ async def send_updates():
         #this part handles business logic and sends updates
         videos_added = events.add_new_videos() 
         for url, chat_id in videos_added:
-            await connection.send_message(text="NEW VIDEO!\n{}".format(url), chat_id=chat_id)
+            await connection.send_message(text="NEW VIDEO!\n{}".format(url), chat_id=chat_id, parse_mode=None)
 
         videos_added = []
         await asyncio.sleep(900) 
