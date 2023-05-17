@@ -24,5 +24,6 @@ CREATE TABLE IF NOT EXISTS favorites (
 
 CREATE TABLE IF NOT EXISTS channel_user (
                         channel_id VARCHAR,
-                        user_id VARCHAR
+                        user_id VARCHAR,
+			UNIQUE (channel_id, user_id)
                         );
