@@ -5,4 +5,5 @@
 **/logs/
 **/*.log
 /db/**/*.csv
-
+**/.vscode
+**/downloads/
