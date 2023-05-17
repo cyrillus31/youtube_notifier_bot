@@ -7,3 +7,4 @@
 /db/**/*.csv
 **/.vscode
 **/downloads/
+**/.DS_Store

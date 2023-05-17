@@ -121,6 +121,7 @@ def get_channel_id_and_user_id_relation() -> dict:
     return result
 
 def get_url_by_id(video_id, user_id) -> str:
+    """Returns url from a database"""
     query = """SELECT url FROM VIDEOS
             JOIN channel_user 
             ON channel_user.channel_id=videos.channel_id

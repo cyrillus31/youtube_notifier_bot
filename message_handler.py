@@ -1,6 +1,7 @@
 import responses
 import db
 import google_api
+from video_downloader import download_audio
 
 async def message_handler(incoming, chat_id, username):
     if "/start" == incoming:
@@ -31,6 +32,14 @@ async def message_handler(incoming, chat_id, username):
     
     elif "/help" in incoming:
         return responses.help
+
+    elif "/audio" in incoming and len(incoming.split()) == 2:
+        video_id = incoming.split()[-1]
+        url = db.get_url_by_id(video_id, chat_id)
+        if len(url) < 10:
+            return "Can't download this video"
+        download_audio(url)
+        return "Audio is being prepared"
 
     return "I don't understand you"
 

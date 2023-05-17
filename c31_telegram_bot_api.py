@@ -1,5 +1,6 @@
 import logging
 import json
+import os
 
 logging.basicConfig(level=logging.INFO, 
                     format=f"%(asctime)s %(levelname)s: %(message)s",
@@ -62,5 +63,30 @@ class Connection():
                 logging.warning("The check the response above! It wasn't OK!")
         except:
             logging.exception("The message wasn't send.")
-    
+
+        async def send_audio(self, chat_id, audio_file=None, parse_mode="Markdown", disable_notification=False):
+            """Sends audio file to the chat"""
+        to_downloads = os.path.join(os.getcwd(), "downloads")
+        root, folders, files = next(os.walk(to_downloads))
+
+        audio_file = files[0]
+        
+        file = {f"{audio_file}": open(os.path.join(to_downloads, audio_file), "rb")}
+        payload = {
+                   'chat_id': chat_id,
+                   "disable_notification": disable_notification,
+                   "parse_mode": parse_mode 
+                   }
+        
+        try:
+            logging.info("The audiofile is going to be sent")
+            response = await self.session.post(self.url+"/sendAudio", files=file, payload=payload)
+            logging.info(f"The auidofile was sent to the telegram server\nAnd the following response was recieved:\n{await response.text()}")
+            if (await response.json())["ok"] != True:
+                logging.warning("The check the response above! It wasn't OK!")
+
+        except Exception:
+            logging.exception("The message wasn't send.")
+
+        os.system("rm -rf downloads")
 
