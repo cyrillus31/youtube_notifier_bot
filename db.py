@@ -125,8 +125,7 @@ def get_url_by_id(video_id, user_id) -> str:
     query = """SELECT url FROM VIDEOS
             JOIN channel_user 
             ON channel_user.channel_id=videos.channel_id
-            WHERE video_id=?, user_id=?"""
+            WHERE videos.id=? AND channel_user.user_id=?"""
     cur.execute(query, (video_id, user_id))
     url, = cur.fetchone() # tuple unpacking to get the string right away
     return url
-

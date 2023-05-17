@@ -31,8 +31,10 @@ async def incoming():
 
             await connection.send_message(chat_id, response, disable_web_page_preview=disable_preview)
 
+            # check if the audio file is requested
             if "/audio" in message:
                 await connection.send_audio(chat_id)
+
             await asyncio.sleep(1)
 
 async def send_updates():
