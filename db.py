@@ -37,7 +37,10 @@ def add_channel(user_id: str, channel_id: str, yt_handle: str):
     try:
         query = """INSERT INTO channels VALUES(?, ?)"""
         cur.execute(query, (channel_id, yt_handle))
+    except:
+        pass
 
+    try:
         query = "INSERT INTO channel_user VALUES(?, ?)"
         cur.execute(query, (channel_id, user_id))
         conn.commit()
