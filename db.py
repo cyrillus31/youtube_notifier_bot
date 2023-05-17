@@ -10,6 +10,11 @@ with open("db/new_tables.sql", "r", encoding="UTF-8") as file:
 cur.executescript(script)
 conn.commit()
 
+def remove_square_brackets(s):
+    s = s.replace("[", "")
+    s = s.replace("]", "")
+    return s
+    
 
 def add_user(name: str, chat_id: str, id = str(uuid.uuid4())):
     try:
@@ -76,7 +81,7 @@ def get_10_latest_videos_for_user(user_id: str) -> list[tuple]:
                ORDER BY id ASC
                """
     cur.execute(query, (user_id,))
-    return "\n\n".join([f"{id}) [{title}]({url})" for id, title, url in cur.fetchall()])
+    return "\n\n".join([f"{id}) [{remove_square_brackets(title)}]({url})" for id, title, url in cur.fetchall()])
 
 def add_to_favorite(video_id: str, user_id: str):
     # check if the video user is trying to add belongs to him
@@ -104,7 +109,7 @@ def get_favorites(user_id):
                WHERE favorites.user_id=?"""
     cur.execute(query, (user_id,))
     try:
-        return "\n\n".join([f"{id}) [{title}]({url})" for (id, title, url) in cur.fetchall()])
+        return "\n\n".join([f"{id}) [{remove_square_brackets(title)}]({url})" for (id, title, url) in cur.fetchall()])
     except:
         return "No videos in favorites"
 
