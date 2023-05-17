@@ -21,8 +21,11 @@ class Connection():
         response = await self.session.get(self.url+f"/getUpdates?offset={self.offset}&limit={limit}&timeout={timeout}")
         response = await response.json()
 
-        if response["result"]:
-            logging.info("JSON with updates:\n%s", [result["message"] for result in response["result"]])
+        if "result" in response:
+            try: 
+                logging.info("JSON with updates:\n%s", [result["message"] for result in response["result"]])
+            except Exception:
+                pass
 
         updates = dict()
         for item in response["result"]:
