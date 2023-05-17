@@ -36,10 +36,9 @@ async def message_handler(incoming, chat_id, username):
     elif "/audio" in incoming and len(incoming.split()) == 2:
         video_id = incoming.split()[-1]
         url = db.get_url_by_id(video_id, chat_id)
-        if len(url) < 10:
-            return "Can't download this video"
-        download_audio(url)
-        return "Audio is being prepared"
+        if download_audio(url):
+            return "Audio is being prepared"
+        return "Can't download this video"
 
     return "I don't understand you"
 

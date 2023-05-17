@@ -135,5 +135,8 @@ def get_url_by_id(video_id, user_id) -> str:
             ON channel_user.channel_id=videos.channel_id
             WHERE videos.id=? AND channel_user.user_id=?"""
     cur.execute(query, (video_id, user_id))
-    url, = cur.fetchone() # tuple unpacking to get the string right away
+    url = cur.fetchone() # tuple unpacking to get the string right away
+    if not url:
+        return ""
+    url, = url
     return url

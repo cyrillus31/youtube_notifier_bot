@@ -69,6 +69,9 @@ class Connection():
         to_downloads = os.path.join(os.getcwd(), "downloads")
         root, folders, files = next(os.walk(to_downloads))
 
+        if files == [] or files is None:
+            return
+
         audio_file = files[0]
         
         payload = {"audio": open(os.path.join(to_downloads, audio_file), "rb")}
@@ -83,5 +86,5 @@ class Connection():
         except Exception:
             logging.exception("The message wasn't send.")
 
-        os.system("rm -rf downloads")
+        os.system("rm -rf downloads/*")
 
