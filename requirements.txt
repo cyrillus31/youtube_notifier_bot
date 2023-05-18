@@ -28,3 +28,4 @@ soupsieve==2.4.1
 uritemplate==4.1.1
 urllib3==1.26.15
 yarl==1.9.2
+pytube @ git+https://github.com/pytube/pytube.git@2ff84938cddd02a78053204517389374f5be7019
