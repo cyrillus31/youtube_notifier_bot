@@ -13,5 +13,3 @@ def download_audio(url):
     except Exception as e:
         return 0
 
-# url = "https://www.youtube.com/watch?v=djzXzAQShgQ"
-# download_audio(url)

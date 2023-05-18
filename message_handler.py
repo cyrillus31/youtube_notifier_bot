@@ -37,7 +37,7 @@ async def message_handler(incoming, chat_id, username):
         video_id = incoming.split()[-1]
         url = db.get_url_by_id(video_id, chat_id)
         if download_audio(url):
-            return "Audio is being prepared"
+            return "Audio downloaded successfully"
         return "Can't download this video"
 
     return "I don't understand you"

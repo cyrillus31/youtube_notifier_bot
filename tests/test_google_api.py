@@ -4,7 +4,7 @@ import requests
 import bs4
 
 sys.path.append('..')
-import google_api
+# import google_api
 
 class Test_google_api(unittest.TestCase):
 

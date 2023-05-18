@@ -9,7 +9,10 @@ async def check_updates(chat_id):
 def add_new_videos() -> list[tuple]: #should retunr (chat_id, url)
     "Returns a list of tuples (url, user_id)"
     channel_ids_list = [id for (id,) in db.get_channels()]
-    new_videos = google_api.create_dict_of_latest_vids(channel_ids_list)
+    try:
+        new_videos = google_api.create_dict_of_latest_vids(channel_ids_list)
+    except Exception as e:
+        return []
 
     channel2user = db.get_channel_id_and_user_id_relation()
     videos_added = []

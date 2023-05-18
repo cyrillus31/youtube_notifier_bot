@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS channels (
 
 CREATE TABLE IF NOT EXISTS users (
                         chat_id VARCHAR PRIMARY KEY,
-                        name VARCHAR UNIQUE, 
+                        name VARCHAR, 
                         date_added TIMESTAMP
                         );
 
