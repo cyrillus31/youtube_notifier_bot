@@ -6,7 +6,7 @@ url_pattern = r"url=(.*)"
 chat_pattern = r"chat_id=(.*)"
 
 
-async def callback_query_parser(data) -> tuple(str, str):
+async def callback_query_parser(data) -> tuple[str, str]:
     if "download" in data:
         url_match = re.search(url_pattern, data)
         chat_id_match = re.search(chat_pattern, data)
