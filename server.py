@@ -53,6 +53,7 @@ async def send_updates():
                 parse_mode="HTML",
                 channel_id=channel_id,
                 url=url,
+                keyboard_needed=True
             )
 
         videos_added = []

@@ -72,6 +72,7 @@ class Connection:
                     data = response["result"]["callback_query"]["data"]
                     url, chat_id = await callback_query_parser(data)
                     await self.send_audio(chat_id)
+                    return None
 
             except Exception:
                 pass
@@ -105,15 +106,11 @@ class Connection:
         disable_notification=False,
         channel_id=None,
         url=None,
+        keyboard_needed=False,
     ):
         "Sends a message back"
-        payload = {
-            "text": text,
-            "chat_id": chat_id,
-            "disable_web_page_preview": disable_web_page_preview,
-            "disable_notification": disable_notification,
-            "parse_mode": parse_mode,
-            "reply_markup": {
+        if keyboard_needed:
+            reply_keyboard = {
                 "inline_keyboard": [
                     [
                         {
@@ -126,9 +123,18 @@ class Connection:
                         },
                     ]
                 ]
-            },
-        }
+            }
+        else:
+            reply_keyboard = None
 
+        payload = {
+            "text": text,
+            "chat_id": chat_id,
+            "disable_web_page_preview": disable_web_page_preview,
+            "disable_notification": disable_notification,
+            "parse_mode": parse_mode,
+            "reply_markup": reply_keyboard,
+        }
         logging.info("The following message is going to be sent: %s", text)
 
         try:
