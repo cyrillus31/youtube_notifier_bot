@@ -20,6 +20,40 @@ class Connection:
         self.session = None
         self.offset = -50
 
+    async def send_audio(
+        self,
+        chat_id,
+        audio_file=None,
+        parse_mode="Markdown",
+        disable_notification=False,
+    ):
+        """Sends audio file to the chat"""
+        to_downloads = os.path.join(os.getcwd(), "downloads")
+        root, folders, files = next(os.walk(to_downloads))
+
+        if files == [] or files is None:
+            return
+
+        audio_file = files[0]
+
+        payload = {"audio": open(os.path.join(to_downloads, audio_file), "rb")}
+
+        try:
+            logging.info("The audiofile is going to be sent")
+            response = await self.session.post(
+                self.url + f"/sendAudio?chat_id={chat_id}", data=payload
+            )
+            logging.info(
+                f"The auidofile was sent to the telegram server\nAnd the following response was recieved:\n{await response.text()}"
+            )
+            if (await response.json())["ok"] != True:
+                logging.warning("The check the response above! It wasn't OK!")
+
+        except Exception:
+            logging.exception("The message wasn't send.")
+
+        os.system("rm -rf downloads/*")
+
     async def get_updates(self, limit=100, timeout=1) -> dict:
         response = await self.session.get(
             self.url
@@ -33,12 +67,12 @@ class Connection:
                     "JSON with updates:\n%s",
                     [result["message"] for result in response["result"]],
                 )
-                
+
                 if "callback_query" in response["result"]:
                     data = response["result"]["callback_query"]["data"]
-                    await callback_query_parser(data)
+                    url, chat_id = await callback_query_parser(data)
+                    await self.send_audio(chat_id)
 
-                    
             except Exception:
                 pass
 
@@ -106,37 +140,3 @@ class Connection:
                 logging.warning("The check the response above! It wasn't OK!")
         except:
             logging.exception("The message wasn't send.")
-
-    async def send_audio(
-        self,
-        chat_id,
-        audio_file=None,
-        parse_mode="Markdown",
-        disable_notification=False,
-    ):
-        """Sends audio file to the chat"""
-        to_downloads = os.path.join(os.getcwd(), "downloads")
-        root, folders, files = next(os.walk(to_downloads))
-
-        if files == [] or files is None:
-            return
-
-        audio_file = files[0]
-
-        payload = {"audio": open(os.path.join(to_downloads, audio_file), "rb")}
-
-        try:
-            logging.info("The audiofile is going to be sent")
-            response = await self.session.post(
-                self.url + f"/sendAudio?chat_id={chat_id}", data=payload
-            )
-            logging.info(
-                f"The auidofile was sent to the telegram server\nAnd the following response was recieved:\n{await response.text()}"
-            )
-            if (await response.json())["ok"] != True:
-                logging.warning("The check the response above! It wasn't OK!")
-
-        except Exception:
-            logging.exception("The message wasn't send.")
-
-        os.system("rm -rf downloads/*")
