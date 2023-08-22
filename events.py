@@ -3,10 +3,12 @@ import google_api
 import db
 import asyncio
 
+
 async def check_updates(chat_id):
     pass
 
-def add_new_videos() -> list[tuple]: #should retunr (chat_id, url)
+
+def add_new_videos() -> list[tuple]:  # should retunr (chat_id, url)
     "Returns a list of tuples (url, user_id)"
     channel_ids_list = [id for (id,) in db.get_channels()]
     try:
@@ -21,7 +23,6 @@ def add_new_videos() -> list[tuple]: #should retunr (chat_id, url)
         # print(url, channel_id, title)
         if db.add_video(title=title, url=url, channel_id=channel_id):
             for user_id in channel2user[channel_id]:
-                videos_added.append((url, user_id))
+                videos_added.append((url, user_id, channel_id))
 
     return videos_added
-

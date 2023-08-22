@@ -101,6 +101,10 @@ def add_to_favorite(video_id: str, user_id: str):
     except:
         return "Video is already in favorites"
 
+def unsubsciribe(user_id: int, channel_id: int):
+    query = """DELETE FROM channel_user
+               WHERE channel_id=? AND user_id=?"""
+    cur.excecute(query, (channel_id, user_id))
 
 def get_favorites(user_id):
     "Returns a list containing video_title and vidoe_url"
