@@ -43,7 +43,7 @@ async def incoming():
             if "/audio" in message:
                 await connection.send_audio(chat_id)
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(1)
 
 
 async def send_updates():
@@ -62,7 +62,7 @@ async def send_updates():
             )
 
         videos_added = []
-        await asyncio.sleep(3)
+        await asyncio.sleep(100)
 
 
 async def main():
