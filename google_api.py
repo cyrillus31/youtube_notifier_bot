@@ -2,6 +2,7 @@ from googleapiclient.discovery import build
 import bs4
 import os
 import requests
+from dotenv import load_dotenv
 
 import logging 
 
@@ -28,6 +29,7 @@ logger.setLevel(logging.INFO)
 #                     format="%(asctime)s %(levelname)s: %(message)s")
 
 
+load_dotenv()
 API_KEY = os.getenv("GOOGLE_YOUTUBE_API_KEY").strip()
 service = build("youtube", "v3", developerKey=API_KEY)
 

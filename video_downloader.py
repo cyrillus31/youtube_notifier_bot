@@ -16,13 +16,13 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.DEBUG)
 
 
-def download_audio(url):
+def download_audio(url, prefix=""):
     try:
         if not os.path.exists("downloads"):
             os.mkdir("downloads")
         yt = pytube.YouTube(url)
         stream = yt.streams.filter(only_audio=True, file_extension="mp4")[0]
-        stream.download(output_path="downloads")
+        stream.download(output_path="downloads", filename_prefix=prefix)
         return 1
     except Exception as e:
         logger.exception(f"The following error happend while trying to download the audio:\n {e}")

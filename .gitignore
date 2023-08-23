@@ -8,3 +8,4 @@
 **/.vscode
 **/downloads/
 **/.DS_Store
+**/.env

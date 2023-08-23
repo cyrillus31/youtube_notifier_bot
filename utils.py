@@ -1,16 +1,13 @@
-import re
-
-from video_downloader import download_audio
-
-url_pattern = r"url=(.*)"
-chat_pattern = r"chat_id=(.*)"
-
-
-async def callback_query_parser(data) -> tuple:
-    if "download" in data:
-        url_match = re.search(url_pattern, data)
-        chat_id_match = re.search(chat_pattern, data)
-        # if url_match and chat_id_match:
-            # download_audio(url_match)
-            # await connection.send_audio(chat_id_match)
-        return url_match, chat_id_match
+async def callback_query_parser(data) -> dict:
+    result = {"action": None, "channel_id": None, "url": None, "user_id": None}
+    d = data.split()
+    if d[0] == "d":
+        result["action"] = "download"
+        result["url"] = d[1]
+        result["user_id"] = d[2]
+    if d[0] == "u":
+        result["action"] = "unsubscribe"
+        result["channel_id"] = d[1] 
+        result["user_id"] = d[2]
+    return result
+        

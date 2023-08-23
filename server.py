@@ -2,6 +2,8 @@ import aiohttp
 import asyncio
 import os
 
+from dotenv import load_dotenv
+
 # create a folder for logs in c31_telegram_bot_api module
 if not os.path.exists("logs"):
     os.makedirs("logs")
@@ -11,7 +13,9 @@ from message_handler import message_handler
 import events
 
 
-TOKEN = os.getenv("TELEGRAM_YOUTUBE_NOTIFIER_TOKEN")
+load_dotenv()
+TOKEN = os.getenv("TELEGRAM_YOUTUBE_NOTIFIER_TOKEN").strip()
+print(TOKEN)
 connection = Connection(TOKEN)
 
 
@@ -19,6 +23,7 @@ async def incoming():
     "This funcion handlins incoming messages"
     while True:
         update = await connection.get_updates()
+        print(update)
         # this part handles incoming messages
         for update_id in sorted(update):
             message, chat_id, username = update[update_id]
@@ -38,7 +43,7 @@ async def incoming():
             if "/audio" in message:
                 await connection.send_audio(chat_id)
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
 
 
 async def send_updates():
@@ -57,7 +62,7 @@ async def send_updates():
             )
 
         videos_added = []
-        await asyncio.sleep(900)
+        await asyncio.sleep(3)
 
 
 async def main():

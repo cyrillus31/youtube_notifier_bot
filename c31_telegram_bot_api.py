@@ -2,7 +2,10 @@ import logging
 import json
 import os
 
+
 from utils import callback_query_parser
+from db import unsubsciribe
+from video_downloader import download_audio
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,6 +29,7 @@ class Connection:
         audio_file=None,
         parse_mode="Markdown",
         disable_notification=False,
+        prefix="",
     ):
         """Sends audio file to the chat"""
         to_downloads = os.path.join(os.getcwd(), "downloads")
@@ -34,7 +38,11 @@ class Connection:
         if files == [] or files is None:
             return
 
-        audio_file = files[0]
+        for file in files:
+            if prefix in file:
+                audio_file = file
+            else:
+                audio_file = files[0]
 
         payload = {"audio": open(os.path.join(to_downloads, audio_file), "rb")}
 
@@ -52,7 +60,7 @@ class Connection:
         except Exception:
             logging.exception("The message wasn't send.")
 
-        os.system("rm -rf downloads/*")
+        os.system(f"rm -rf downloads/{prefix}*")
 
     async def get_updates(self, limit=100, timeout=1) -> dict:
         response = await self.session.get(
@@ -60,7 +68,6 @@ class Connection:
             + f"/getUpdates?offset={self.offset}&limit={limit}&timeout={timeout}"
         )
         response = await response.json()
-
         if "result" in response:
             try:
                 logging.info(
@@ -68,21 +75,30 @@ class Connection:
                     [result["message"] for result in response["result"]],
                 )
 
-                if "callback_query" in response["result"]:
-                    data = response["result"]["callback_query"]["data"]
-                    url, chat_id = await callback_query_parser(data)
-                    await self.send_audio(chat_id)
-                    return None
 
             except Exception:
                 pass
 
         updates = dict()
         for item in response["result"]:
+            update_id = item["update_id"]
+            if "callback_query" in item:
+                data = item["callback_query"]["data"]
+                data = await callback_query_parser(data)
+                print(data)
+                if data["action"] == "download":
+                    await self.send_message(chat_id=data["user_id"], text="Audio is being downloading...")
+                    download_audio(url=data["url"], prefix=data["user_id"])
+                    await self.send_audio(data['user_id'], prefix=data["user_id"])
+                if data["action"] == "unsubscribe":
+                    unsubsciribe(user_id=data["user_id"], channel_id=data["channel_id"])
+                    await self.send_message(chat_id=data["user_id"], text="You were unsubscribed")
+                self.offset = update_id + 1
+                continue
+
             try:
                 chat_id = item["message"]["chat"]["id"]
                 username = item["message"]["from"]["first_name"]
-                update_id = item["update_id"]
                 text = item["message"]["text"]
 
                 updates[update_id] = text, chat_id, username
@@ -109,23 +125,20 @@ class Connection:
         keyboard_needed=False,
     ):
         "Sends a message back"
-        if keyboard_needed:
-            reply_keyboard = {
-                "inline_keyboard": [
-                    [
-                        {
-                            "text": "download audio",
-                            "callback_data": f"download url={url} to chat_id={chat_id}",
-                        },
-                        {
-                            "text": "unsubscribe",
-                            "callback_data": f"unsubscribe from cahnnel_id={channel_id} of user chat_id={chat_id}",
-                        },
-                    ]
+        reply_keyboard = {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "download audio",
+                        "callback_data": f"d {url} {chat_id}",
+                    },
+                    {
+                        "text": "unsubscribe",
+                        "callback_data": f"u {channel_id} {chat_id}",
+                    },
                 ]
-            }
-        else:
-            reply_keyboard = None
+            ]
+        }
 
         payload = {
             "text": text,
@@ -133,10 +146,11 @@ class Connection:
             "disable_web_page_preview": disable_web_page_preview,
             "disable_notification": disable_notification,
             "parse_mode": parse_mode,
-            "reply_markup": reply_keyboard,
         }
-        logging.info("The following message is going to be sent: %s", text)
 
+        if keyboard_needed:
+            payload["reply_markup"] = reply_keyboard
+        logging.info("The following message is going to be sent: %s", text)
         try:
             response = await self.session.post(self.url + "/sendMessage", json=payload)
             logging.info(
