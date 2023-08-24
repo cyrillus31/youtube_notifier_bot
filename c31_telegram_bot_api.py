@@ -89,7 +89,7 @@ class Connection:
                     print(data)
 
                 if data["action"] == "download":
-                    await self.send_message(chat_id=data["user_id"], text="Audio is being downloading...")
+                    await self.send_message(chat_id=data["user_id"], text="Audio is being downloaded...")
                     download_audio(url=data["url"], prefix=data["user_id"])
                     await self.send_audio(data['user_id'], prefix=data["user_id"])
                 if data["action"] == "unsubscribe":

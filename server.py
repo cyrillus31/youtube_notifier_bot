@@ -42,7 +42,7 @@ async def incoming():
             if "/audio" in message:
                 await connection.send_audio(chat_id)
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(3)
 
 
 async def send_updates():
