@@ -17,6 +17,9 @@ logger.setLevel(logging.DEBUG)
 
 
 def download_audio(url, prefix=""):
+    if prefix != "":
+        prefix += "_"
+
     try:
         if not os.path.exists("downloads"):
             os.mkdir("downloads")
