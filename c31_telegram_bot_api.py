@@ -85,7 +85,9 @@ class Connection:
             if "callback_query" in item:
                 data = item["callback_query"]["data"]
                 data = await callback_query_parser(data)
-                print(data)
+                if data != {}:
+                    print(data)
+
                 if data["action"] == "download":
                     await self.send_message(chat_id=data["user_id"], text="Audio is being downloading...")
                     download_audio(url=data["url"], prefix=data["user_id"])

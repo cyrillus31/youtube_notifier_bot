@@ -15,7 +15,6 @@ import events
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_YOUTUBE_NOTIFIER_TOKEN").strip()
-print(TOKEN)
 connection = Connection(TOKEN)
 
 
