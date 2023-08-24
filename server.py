@@ -23,7 +23,7 @@ async def incoming():
     "This funcion handlins incoming messages"
     while True:
         update = await connection.get_updates()
-        print(update)
+        # print(update)
         # this part handles incoming messages
         for update_id in sorted(update):
             message, chat_id, username = update[update_id]
