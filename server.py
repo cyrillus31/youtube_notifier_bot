@@ -61,7 +61,7 @@ async def send_updates():
             )
 
         videos_added = []
-        await asyncio.sleep(600)
+        await asyncio.sleep(1800)
 
 
 async def main():
