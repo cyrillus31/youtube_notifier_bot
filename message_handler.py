@@ -1,6 +1,8 @@
 import responses
 import db
 import google_api
+from video_downloader import download_audio
+
 
 async def message_handler(incoming, chat_id, username):
     if "/start" == incoming:
@@ -22,15 +24,21 @@ async def message_handler(incoming, chat_id, username):
 
     elif "/latest" == incoming:
         return db.get_10_latest_videos_for_user(chat_id)
-    
-    elif "/add_favorite" in incoming and len(incoming.split()) ==2:
+
+    elif "/add_favorite" in incoming and len(incoming.split()) == 2:
         return db.add_to_favorite(incoming.split()[1], chat_id)
-    
+
     elif "/get_favorites" in incoming:
         return db.get_favorites(chat_id)
-    
+
     elif "/help" in incoming:
         return responses.help
 
-    return "I don't understand you"
+    elif "/audio" in incoming and len(incoming.split()) == 2:
+        video_id = incoming.split()[-1]
+        url = db.get_url_by_id(video_id, chat_id)
+        if download_audio(url):
+            return "Audio will be downloaded"
+        return "Can't download this video"
 
+    return "I don't understand you"

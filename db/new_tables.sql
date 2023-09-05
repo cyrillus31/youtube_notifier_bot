@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS channels (
 
 CREATE TABLE IF NOT EXISTS users (
                         chat_id VARCHAR PRIMARY KEY,
-                        name VARCHAR UNIQUE, 
+                        name VARCHAR, 
                         date_added TIMESTAMP
                         );
 
@@ -24,5 +24,6 @@ CREATE TABLE IF NOT EXISTS favorites (
 
 CREATE TABLE IF NOT EXISTS channel_user (
                         channel_id VARCHAR,
-                        user_id VARCHAR
+                        user_id VARCHAR,
+			UNIQUE (channel_id, user_id)
                         );

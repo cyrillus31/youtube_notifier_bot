@@ -5,4 +5,7 @@
 **/logs/
 **/*.log
 /db/**/*.csv
-
+**/.vscode
+**/downloads/
+**/.DS_Store
+**/.env

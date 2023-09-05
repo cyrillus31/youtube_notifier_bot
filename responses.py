@@ -14,3 +14,6 @@ help = """*Hi! This bot can send you updates from youtube channels you picked.*
 
 По любым вопросам: @cyrillus31
 """
+
+audio_ok = 'Audio is being downloaded'
+

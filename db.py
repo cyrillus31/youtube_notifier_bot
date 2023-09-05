@@ -10,6 +10,11 @@ with open("db/new_tables.sql", "r", encoding="UTF-8") as file:
 cur.executescript(script)
 conn.commit()
 
+def remove_square_brackets(s):
+    s = s.replace("[", "")
+    s = s.replace("]", "")
+    return s
+    
 
 def add_user(name: str, chat_id: str, id = str(uuid.uuid4())):
     try:
@@ -37,7 +42,10 @@ def add_channel(user_id: str, channel_id: str, yt_handle: str):
     try:
         query = """INSERT INTO channels VALUES(?, ?)"""
         cur.execute(query, (channel_id, yt_handle))
+    except:
+        pass
 
+    try:
         query = "INSERT INTO channel_user VALUES(?, ?)"
         cur.execute(query, (channel_id, user_id))
         conn.commit()
@@ -73,7 +81,7 @@ def get_10_latest_videos_for_user(user_id: str) -> list[tuple]:
                ORDER BY id ASC
                """
     cur.execute(query, (user_id,))
-    return "\n\n".join([f"{id}) [{title}]({url})" for id, title, url in cur.fetchall()])
+    return "\n\n".join([f"{id}) [{remove_square_brackets(title)}]({url})" for id, title, url in cur.fetchall()])
 
 def add_to_favorite(video_id: str, user_id: str):
     # check if the video user is trying to add belongs to him
@@ -93,6 +101,12 @@ def add_to_favorite(video_id: str, user_id: str):
     except:
         return "Video is already in favorites"
 
+def unsubsciribe(user_id: int, channel_id: int):
+    query = """DELETE FROM channel_user
+               WHERE channel_id=? AND user_id=?"""
+    cur.execute(query, (channel_id, user_id))
+    conn.commit()
+    
 
 def get_favorites(user_id):
     "Returns a list containing video_title and vidoe_url"
@@ -101,7 +115,7 @@ def get_favorites(user_id):
                WHERE favorites.user_id=?"""
     cur.execute(query, (user_id,))
     try:
-        return "\n\n".join([f"{id}) [{title}]({url})" for (id, title, url) in cur.fetchall()])
+        return "\n\n".join([f"{id}) [{remove_square_brackets(title)}]({url})" for (id, title, url) in cur.fetchall()])
     except:
         return "No videos in favorites"
 
@@ -120,3 +134,15 @@ def get_channel_id_and_user_id_relation() -> dict:
 
     return result
 
+def get_url_by_id(video_id, user_id) -> str:
+    """Returns url from a database"""
+    query = """SELECT url FROM VIDEOS
+            JOIN channel_user 
+            ON channel_user.channel_id=videos.channel_id
+            WHERE videos.id=? AND channel_user.user_id=?"""
+    cur.execute(query, (video_id, user_id))
+    url = cur.fetchone() # tuple unpacking to get the string right away
+    if not url:
+        return ""
+    url, = url
+    return url
