@@ -2,7 +2,7 @@ start = "Hi! User {} registered"
 
 added = "Channel was added!"
 
-help = """*Hi! This bot can send you updates from youtube channels you picked. Updates may take from 15 to 40 minutes.*
+help = """*Hi! This bot can send you updates from youtube channels you picked every 10 minutes and it will allow you to download audiostreams of those vidoes.*
 
 Commands:             
 

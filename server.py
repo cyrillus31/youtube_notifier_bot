@@ -17,6 +17,8 @@ load_dotenv()
 TOKEN = os.getenv("TELEGRAM_YOUTUBE_NOTIFIER_TOKEN").strip()
 connection = Connection(TOKEN)
 
+time_to_poll_youtube_sec = 600
+
 
 async def incoming():
     "This funcion handlins incoming messages"
@@ -34,6 +36,8 @@ async def incoming():
             else:
                 disable_preview = False
 
+            await asyncio.sleep(2)
+
             await connection.send_message(
                 chat_id, response, disable_web_page_preview=disable_preview
             )
@@ -42,7 +46,6 @@ async def incoming():
             if "/audio" in message:
                 await connection.send_audio(chat_id)
 
-            await asyncio.sleep(3)
 
 
 async def send_updates():
@@ -61,7 +64,7 @@ async def send_updates():
             )
 
         videos_added = []
-        await asyncio.sleep(1800)
+        await asyncio.sleep(time_to_poll_youtube_sec)
 
 
 async def main():

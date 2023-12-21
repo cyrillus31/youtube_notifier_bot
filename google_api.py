@@ -21,7 +21,7 @@ file_handler.setFormatter(formatter)
 
 # add cutom updated file_handler orbject to my custom logger object and set logging level 
 logger.addHandler(file_handler)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.ERROR)
 
 # logging.basicConfig(filename='logs/google_api.log', 
 #                     level=logging.INFO,

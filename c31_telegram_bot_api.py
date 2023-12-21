@@ -8,7 +8,7 @@ from db import unsubsciribe
 from video_downloader import download_audio
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.ERROR,
     format=f"%(asctime)s %(levelname)s: %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S",
     filename="logs/telegram_api.log",
