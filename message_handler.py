@@ -13,17 +13,21 @@ async def message_handler(incoming, chat_id, username):
     elif "/add_channel" in incoming and len(incoming.split()) == 2:
         url = incoming.split()[1]
         yt_id, yt_handle = google_api.get_channel_id(url)
-
+        db_response = db.add_channel(chat_id, yt_id, yt_handle)
         if not yt_id or not yt_handle:
             return "Sorry. Channel can't be added"
 
-        if db.add_channel(chat_id, yt_id, yt_handle):
+        if db_response == 1: 
             return responses.added
-        else:
+
+        elif db_response == 0:
             return "Channel is already added"
 
+        else:
+            return db_response
+
     elif "/latest" == incoming:
-        return db.get_10_latest_videos_for_user(chat_id)
+        return db.get_latest_videos_for_user(chat_id)
 
     elif "/add_favorite" in incoming and len(incoming.split()) == 2:
         return db.add_to_favorite(incoming.split()[1], chat_id)

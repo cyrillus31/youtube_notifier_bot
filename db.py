@@ -1,8 +1,12 @@
+import os
+
 import sqlite3
 import uuid
 
 conn = sqlite3.connect("db/data.db")
 cur = conn.cursor()
+
+MAX_CHANNELS_CONSTRAINT = 10
 
 # create the database tables
 with open("db/new_tables.sql", "r", encoding="UTF-8") as file:
@@ -38,7 +42,59 @@ def add_video(channel_id: str, title: str, url: str):
         # print("Can't insert new video", e)
         return 0
 
+
+def get_channels():
+    query = "SELECT id FROM channels"
+    cur.execute(query)
+    return cur.fetchall()
+
+
+def count_channels(user_id=None) -> list[tuple]:
+    # query = """SELECT id FROM channels"""
+    query = """
+    SELECT COUNT(*) FROM channels 
+        JOIN channel_user
+        JOIN users
+        ON channel_id = id AND user_id = chat_id
+        WHERE user_id = ?
+    """
+    cur.execute(query, (user_id,))
+    return cur.fetchone()[0]
+
+def get_users():
+    query = """SELECT telegram_chat_id FROM channels"""
+    cur.execute(query)
+    return cur.fetchall()
+
+def get_videos():
+    query = """SELECT url FROM videos"""
+    cur.execute(query)
+    return cur.fetchall()
+
+def get_latest_videos_for_user(user_id: str, amount: int = MAX_CHANNELS_CONSTRAINT, prettify = True) -> list[tuple]:
+    "Returns a list of tuples for five latests videos (id, title, url)"
+    query = """SELECT * FROM (SELECT id, title, url FROM videos 
+                JOIN channel_user 
+                 ON videos.channel_id=channel_user.channel_id
+                 WHERE channel_user.user_id=?
+                ORDER BY id DESC
+                LIMIT ?)
+               ORDER BY id ASC
+               """
+    cur.execute(query, (user_id, amount))
+    list_of_results = cur.fetchall()
+    if prettify: 
+        return "\n\n".join([f"{id}) [{remove_square_brackets(title)}]({url})" for id, title, url in list_of_results])
+    return list_of_results
+
+
 def add_channel(user_id: str, channel_id: str, yt_handle: str):
+    admin_chat_id = os.getenv("ADMIN_USER_CHAT_ID")
+    if admin_chat_id != user_id:
+        amount_of_channels = int(count_channels(user_id))
+        if amount_of_channels >= 10:
+            return f"Channel can't be added. The max limit of channels is: {MAX_CHANNELS_CONSTRAINT}. And you have: {amount_of_channels}"
+
     try:
         query = """INSERT INTO channels VALUES(?, ?)"""
         cur.execute(query, (channel_id, yt_handle))
@@ -55,33 +111,6 @@ def add_channel(user_id: str, channel_id: str, yt_handle: str):
         print("Can't insert new channel")
         return 0
 
-def get_channels() -> list[tuple]:
-    query = """SELECT id FROM channels"""
-    cur.execute(query)
-    return cur.fetchall()
-
-def get_users():
-    query = """SELECT telegram_chat_id FROM channels"""
-    cur.execute(query)
-    return cur.fetchall()
-
-def get_videos():
-    query = """SELECT url FROM videos"""
-    cur.execute(query)
-    return cur.fetchall()
-
-def get_10_latest_videos_for_user(user_id: str) -> list[tuple]:
-    "Returns a list of tuples for five latests videos (id, title, url)"
-    query = """SELECT * FROM (SELECT id, title, url FROM videos 
-               JOIN channel_user 
-               ON videos.channel_id=channel_user.channel_id
-               WHERE channel_user.user_id=?
-               ORDER BY id DESC
-               LIMIT 10)
-               ORDER BY id ASC
-               """
-    cur.execute(query, (user_id,))
-    return "\n\n".join([f"{id}) [{remove_square_brackets(title)}]({url})" for id, title, url in cur.fetchall()])
 
 def add_to_favorite(video_id: str, user_id: str):
     # check if the video user is trying to add belongs to him
